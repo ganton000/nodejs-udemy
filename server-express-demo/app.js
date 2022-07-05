@@ -12,7 +12,7 @@ const PORT = 3001;
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //set up routes
-app.use(adminRoutes);
+app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 //catch all to return page not found for unmatched paths
