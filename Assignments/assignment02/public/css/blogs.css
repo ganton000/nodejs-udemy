@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+main {
+    padding: 1rem;
+}
+
+.blog-header {
+    width: 100%;
+    height: 4rem;
+    background-color: rgba(14, 32, 105, 0.909);
+    padding: 0 1rem;
+}
+.blog-header__nav {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.blog-header__item-list {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+.blog-header__item {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+}
+
+.blog-header__item a {
+    text-decoration: none;
+    color: white;
+}
+
+.blog-header__item a:hover,
+.blog-header__item a:active,
+.blog-header__item a.active {
+    color: #d9df27;
+}

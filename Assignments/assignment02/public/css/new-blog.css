@@ -1,0 +1,38 @@
+.blog-form {
+	width: 20rem;
+	max-width: 90%;
+	margin: auto;
+}
+.form-control {
+	margin: 1rem 0;
+}
+.form-control--title,
+.form-control--content {
+	display: flex;
+	flex-direction: column;
+}
+.form-control--title {
+	margin-bottom: 1rem;
+}
+
+.form-control input,
+.form-control textarea {
+    border: 1px solid #3741a6;
+    font: inherit;
+    border-radius: 2px;
+}
+
+button {
+    font: inherit;
+    border: 1px solid #3741a6;
+    color: #3741a6;
+    background: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover,
+button:active {
+    background-color: #3741a6;
+    color: white;
+}
