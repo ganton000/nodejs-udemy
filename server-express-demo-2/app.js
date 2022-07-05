@@ -5,7 +5,13 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-const adminRoutes = require("./routes/admin");
+//global config state management
+//compile dynamic templates with pug engine
+//and templates are found in views directory.
+app.set("view engine", "pug");
+app.set("views", "views");
+
+const { routes: adminRoutes } = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 const PORT = 3001;
