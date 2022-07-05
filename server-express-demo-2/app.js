@@ -2,13 +2,24 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const expressHbs = require("express-handlebars");
 
 const app = express();
+
+//registers new templating engine
+app.engine(
+    "hbs",
+    expressHbs({
+        layoutsir: "views/layouts/",
+        defaultLayout: "main-layout",
+        extname: "hbs",
+    })
+);
 
 //global config state management
 //compile dynamic templates with pug engine
 //and templates are found in views directory.
-app.set("view engine", "pug");
+app.set("view engine", "hbs");
 app.set("views", "views");
 
 const { routes: adminRoutes } = require("./routes/admin");
