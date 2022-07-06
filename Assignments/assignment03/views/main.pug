@@ -1,3 +1,14 @@
 extends layouts/main-layout.pug
 
+block styles
+	link(rel="stylesheet", href="/css/user.css")
+
 block content
+	main
+		if users.length > 0
+			.user-container
+				ul.user-list
+					each user in users
+						li.user-item #{user.username}
+		else
+			h1 No Users Available

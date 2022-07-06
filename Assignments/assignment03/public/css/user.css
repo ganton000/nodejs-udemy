@@ -1,0 +1,26 @@
+.user-container {
+	width: 100%;
+	height: 100%;
+	padding: 5rem 0;
+	margin: auto;
+	text-align: center;
+	background-color: #5e5c5c;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.user-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+.user-item {
+	color: white;
+	font-family: inherit;
+}
+
+.user-item:not(:last-child) {
+	margin-bottom: 1.2rem;
+}

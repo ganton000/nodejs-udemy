@@ -9,7 +9,7 @@ router.get("/add-user", (req, res, next) => {
 
 router.post("/add-user", (req, res, next) => {
 	const { username } = req.body;
-	users.push(username);
+	users.push({ username });
 	res.redirect('/');
 });
 
