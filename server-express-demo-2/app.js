@@ -22,7 +22,7 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-const { routes: adminRoutes } = require("./routes/admin");
+const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 const PORT = 3001;
