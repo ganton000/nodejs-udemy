@@ -4,6 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 //const expressHbs = require("express-handlebars");
 
+const errorController = require('./controllers/error');
+
 const app = express();
 
 //registers new templating engine
@@ -38,9 +40,6 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 //catch all to return page not found for unmatched paths
-app.use((req, res, next) => {
-    //res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
-    res.status(404).render("404", { docTitle: "Page Not Found" });
-});
+app.use(errorController.get404Page);
 
 app.listen(PORT);
