@@ -5,12 +5,18 @@ exports.getAddProduct = (req, res, next) => {
         docTitle: "Add Product",
         path: "/admin/add-product",
         editing: false,
+        action: "add-product",
+        title: "",
+        imageUrl: "",
+        price: "",
+        description: "",
+        buttonAction: "Add",
     });
 };
 
 exports.postAddProduct = (req, res, next) => {
     const { title, imageUrl, price, description } = req.body;
-    const product = new Product(title, imageUrl, description, price);
+    const product = new Product(null, title, imageUrl, description, price);
     product.save();
     res.redirect("/");
 };
@@ -32,8 +38,8 @@ exports.getEditProduct = (req, res, next) => {
             path: "/admin/edit-product",
             editing: edit,
             product: product,
-            buttonAction: edit ? "Update" : "Save",
-            action: edit ? "edit-product" : "add-product",
+            buttonAction: edit ? "Update" : "Delete",
+            action: edit ? "edit-product" : "delete-product",
             title: edit ? product.title : "",
             imageUrl: edit ? product.imageUrl : "",
             price: edit ? product.price : "",
@@ -42,7 +48,24 @@ exports.getEditProduct = (req, res, next) => {
     });
 };
 
-exports.postEditProduct = (req, res, next) => {};
+exports.postEditProduct = (req, res, next) => {
+    const {
+        productId,
+        title: updatedTitle,
+        price: updatedPrice,
+        imageUrl: updatedImageUrl,
+        description: updatedDesc,
+    } = req.body;
+    const updatedProduct = new Product(
+        productId,
+        updatedTitle,
+        updatedImageUrl,
+        updatedDesc,
+        updatedPrice
+    );
+    updatedProduct.save();
+    res.redirect("/admin/products");
+};
 
 exports.getProducts = (req, res, next) => {
     Product.fetchAll((products) => {
@@ -52,4 +75,10 @@ exports.getProducts = (req, res, next) => {
             docTitle: "My Products",
         });
     });
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+    const { productId } = req.body;
+    Product.deleteById(productId);
+    res.redirect("/admin/products");
 };
