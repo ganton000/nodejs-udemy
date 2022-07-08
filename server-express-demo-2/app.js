@@ -30,14 +30,6 @@ const shopRoutes = require("./routes/shop");
 
 const PORT = 3001;
 
-db.execute("SELECT * FROM products")
-    .then((res) => {
-        console.log(res[0][0]);
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-
 //parses req.body sent through forms
 app.use(bodyParser.urlencoded({ extended: false }));
 
