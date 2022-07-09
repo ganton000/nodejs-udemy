@@ -16,13 +16,21 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
     const { title, imageUrl, price, description } = req.body;
-    Product.create({
-        title,
-        description,
-        price,
-        imageUrl,
-    })
-        .then((res) => {
+    req.user
+        .createProduct({
+            title,
+            description,
+            price,
+            imageUrl,
+        })
+        //Product.create({
+        //    title,
+        //    description,
+        //    price,
+        //    imageUrl,
+        //    userId: req.user.id,
+        //})
+        .then((result) => {
             console.log("Product Created");
             res.redirect("/admin/products");
         })
@@ -33,17 +41,19 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
     const { edit } = req.query;
-    const { productId } = req.params;
 
     if (!edit) {
         return res.redirect("/");
     }
 
-    Product.findByPk(productId)
-        .then((product) => {
-            if (!product) {
+    const { productId } = req.params;
+    req.user
+        .getProducts({ where: { id: productId } })
+        .then((products) => {
+            if (!products) {
                 return res.redirect("/");
             }
+            const product = products[0];
             res.render("admin/edit-product", {
                 docTitle: "Edit Product",
                 path: "/admin/edit-product",
@@ -70,10 +80,10 @@ exports.postEditProduct = (req, res, next) => {
     } = req.body;
     Product.findByPk(productId)
         .then((product) => {
-            product.title = updatedTitle
-            product.price = updatedPrice
-            product.description = updatedDesc
-            product.imageUrl = updatedImageUrl
+            product.title = updatedTitle;
+            product.price = updatedPrice;
+            product.description = updatedDesc;
+            product.imageUrl = updatedImageUrl;
             return product.save();
         })
         .then((result) => {
@@ -84,7 +94,8 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-    Product.findAll()
+    req.user
+        .getProducts()
         .then((products) => {
             res.render("admin/products", {
                 products,
