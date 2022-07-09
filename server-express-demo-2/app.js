@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 //const expressHbs = require("express-handlebars");
 
 const errorController = require("./controllers/error");
-const db = require("./utils/database");
+const sequelize = require("./utils/database");
 
 const app = express();
 
@@ -43,4 +43,11 @@ app.use(shopRoutes);
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);
 
-app.listen(PORT);
+sequelize
+    .sync()
+    .then(result => {
+        app.listen(PORT);
+    })
+    .catch(err => {
+        console.log(err);
+    });
