@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
 const sequelize = require("./utils/database");
+const Product = require("./models/product");
+const User = require("./models/user");
 
 const app = express();
 
@@ -33,6 +35,18 @@ const PORT = 3001;
 //parses req.body sent through forms
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//register new middleware to retrieve User
+app.use((req, res, next) => {
+    User.findByPk(1)
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -43,11 +57,26 @@ app.use(shopRoutes);
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);
 
+//create relationships between models
+Product.belongsTo(User, { constraints: true, onelete: "CASCADE" });
+User.hasMany(Product);
+
 sequelize
     .sync()
-    .then(result => {
+    .then((result) => {
+        return User.findByPk(1);
         app.listen(PORT);
     })
-    .catch(err => {
+    .then((user) => {
+        if (!user) {
+            return User.create({ name: "Harry", email: "Harry@gmail.com" });
+        }
+
+        return Promise.resolve(user);
+    })
+    .then((user) => {
+        app.listen(PORT);
+    })
+    .catch((err) => {
         console.log(err);
     });
