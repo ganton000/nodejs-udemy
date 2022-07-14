@@ -82,6 +82,10 @@ sequelize
         return Promise.resolve(user);
     })
     .then((user) => {
+        //create cart for the user
+        return user.createCart();
+    })
+    .then((cart) => {
         app.listen(PORT);
     })
     .catch((err) => {
