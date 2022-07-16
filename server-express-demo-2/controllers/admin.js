@@ -95,15 +95,12 @@ exports.getProducts = (req, res, next) => {
         .catch((err) => console.log(err));
 };
 
-//exports.postDeleteProduct = (req, res, next) => {
-//    const { productId } = req.body;
-//    Product.findByPk(productId)
-//        .then((product) => {
-//            return product.destroy();
-//        })
-//        .then((result) => {
-//            console.log("Product Removed");
-//            res.redirect("/admin/products");
-//        })
-//        .catch((err) => console.log(err));
-//};
+exports.postDeleteProduct = (req, res, next) => {
+    const { productId } = req.body;
+    Product.deleteById(productId)
+        .then(() => {
+            console.log("Product Removed");
+            res.redirect("/admin/products");
+        })
+        .catch((err) => console.log(err));
+};
