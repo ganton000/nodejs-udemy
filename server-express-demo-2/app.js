@@ -15,7 +15,7 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 
 const adminRoutes = require("./routes/admin");
-//const shopRoutes = require("./routes/shop");
+const shopRoutes = require("./routes/shop");
 
 const PORT = 3001;
 
@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //set up routes
 app.use("/admin", adminRoutes);
-//app.use(shopRoutes);
+app.use(shopRoutes);
 
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);

@@ -1,21 +1,7 @@
 const Product = require("../models/product");
 
 exports.getProducts = (req, res, next) => {
-    //res.sendFile(path.join(rootDir, "views", "shop.html"));
-    //mysql2 version
-    //Product.fetchAll()
-    //    .then(([rows, fieldData]) => {
-    //        res.render("shop/product-list", {
-    //            products: rows,
-    //            docTitle: "All Products",
-    //            path: "/products",
-    //        });
-    //    })
-    //    .catch((err) => {
-    //        console.log(err);
-    //    });
-    //sequelize
-    Product.findAll()
+    Product.fetchAll()
         .then((products) => {
             res.render("shop/product-list", {
                 products,
@@ -42,7 +28,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-    Product.findAll()
+    Product.fetchAll()
         .then((products) => {
             res.render("shop/index", {
                 products,
