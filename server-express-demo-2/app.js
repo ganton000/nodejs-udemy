@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
 const mongoConnect = require('./utils/database').mongoConnect;
+const User = require('./models/user');
 
 const app = express();
 
@@ -24,14 +25,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //register new middleware to retrieve User
 app.use((req, res, next) => {
-    //User.findByPk(1)
-    //    .then((user) => {
-    //        req.user = user;
-    //        next();
-    //    })
-    //    .catch((err) => {
-    //        console.log(err);
-    //    });
+    User.findById("62d33c33a88bd506112eca2c")
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     next();
 });
 
