@@ -1,0 +1,10 @@
+.DS_Store
+**/.DS_Store
+*.pdf
+package-lock.json
+node_modules/
+.vscode/
+**/.vscode/
+**/*.txt
+*.txt
+*.env
