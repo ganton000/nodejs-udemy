@@ -2,30 +2,11 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
-//const expressHbs = require("express-handlebars");
 
 const errorController = require("./controllers/error");
-const mongoConnect = require('./utils/database');
-
-//const sequelize = require("./utils/database");
-//const Product = require("./models/product");
-//const User = require("./models/user");
-//const Cart = require("./models/cart");
-//const CartItem = require("./models/cart-item");
-//const Order = require("./models/order.js");
-//const OrderItem = require("./models/order-item");
+const mongoConnect = require('./utils/database').mongoConnect;
 
 const app = express();
-
-//registers new templating engine
-//app.engine(
-//    "hbs",
-//    expressHbs({
-//        layoutsir: "views/layouts/",
-//        defaultLayout: "main-layout",
-//        extname: "hbs",
-//    })
-//);
 
 //global config state management
 //compile dynamic templates with pug engine
@@ -51,6 +32,7 @@ app.use((req, res, next) => {
     //    .catch((err) => {
     //        console.log(err);
     //    });
+    next();
 });
 
 //to serve static files: pass in folder to grant read-access to
@@ -63,44 +45,6 @@ app.use("/admin", adminRoutes);
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);
 
-mongoConnect(client => {
-    console.log(client)
+mongoConnect(() => {
     app.listen(PORT);
 })
-
-////create relationships between models
-//Product.belongsTo(User, { constraints: true, onelete: "CASCADE" });
-//User.hasMany(Product);
-//User.hasOne(Cart);
-//Cart.belongsTo(User);
-//Cart.belongsToMany(Product, { through: CartItem });
-//Product.belongsToMany(Cart, { through: CartItem });
-//Order.belongsTo(User);
-//User.hasMany(Order);
-//Order.belongsToMany(Product, { through: OrderItem });
-//Product.belongsToMany(Order, { through: OrderItem });
-
-//sequelize
-//    //.sync({ force: true })
-//    .sync()
-//    .then((result) => {
-//        return User.findByPk(1);
-//        app.listen(PORT);
-//    })
-//    .then((user) => {
-//        if (!user) {
-//            return User.create({ name: "Harry", email: "Harry@gmail.com" });
-//        }
-
-//        return Promise.resolve(user);
-//    })
-//    .then((user) => {
-//        //create cart for the user
-//        return user.createCart();
-//    })
-//    .then((cart) => {
-//        app.listen(PORT);
-//    })
-//    .catch((err) => {
-//        console.log(err);
-//    });
