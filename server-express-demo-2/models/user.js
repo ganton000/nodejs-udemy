@@ -13,6 +13,8 @@ const userSchema = new Schema({
     },
 });
 
+module.exports = mongoose.model("Users", userSchema);
+
 //const mongodb = require("mongodb");
 //const { getProducts } = require("../controllers/shop");
 
