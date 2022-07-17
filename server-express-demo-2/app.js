@@ -26,16 +26,16 @@ const PORT = 3001;
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //register new middleware to retrieve User
-//app.use((req, res, next) => {
-//    User.findById("62d33c33a88bd506112eca2c")
-//        .then((user) => {
-//            req.user = new User(user.name, user.email, user.cart, user._id);
-//            next();
-//        })
-//        .catch((err) => {
-//            console.log(err);
-//        });
-//});
+app.use((req, res, next) => {
+    User.findById("62d49e22b166f91e0d342e77")
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
 
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
@@ -49,5 +49,19 @@ app.use(errorController.get404Page);
 
 mongoose
     .connect(process.env.MONGODB_URI)
-    .then(() => app.listen(PORT))
+    .then(() => {
+        User.findOne().then((user) => {
+            if (!user) {
+                const user = new User({
+                    name: "Harry",
+                    email: "Harry@gmail.com",
+                    cart: {
+                        items: [],
+                    },
+                });
+                user.save();
+            }
+        });
+        app.listen(PORT);
+    })
     .catch((err) => console.log(err));
