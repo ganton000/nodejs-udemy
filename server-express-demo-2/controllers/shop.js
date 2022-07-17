@@ -41,19 +41,14 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
     req.user
-        .getCart() //sequelize magic method
-        .then((cart) => {
-            return cart
-                .getProducts()
-                .then((products) => {
-                    res.render("shop/cart", {
-                        path: "/cart",
-                        docTitle: "Your Cart",
-                        products,
-                        isCartEmpty: products.length > 0 ? true : false,
-                    });
-                })
-                .catch((err) => console.log(err));
+        .getCart()
+        .then(products => {
+            res.render("shop/cart", {
+                path: "/cart",
+                docTitle: "Your Cart",
+                products,
+                isCartEmpty: products.length > 0 ? true : false,
+            });
         })
         .catch((err) => console.log(err));
 };
