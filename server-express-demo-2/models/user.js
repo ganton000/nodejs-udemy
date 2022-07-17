@@ -70,6 +70,20 @@ class User {
             .catch((err) => console.log(err));
     }
 
+    deleteItemFromCart(productId) {
+        const updatedCartItems = this.cart.items.filter(
+            (item) => item.productId.toString() !== productId.toString()
+        );
+
+        const db = getDb();
+        return db.collection("users").updateOne(
+            {
+                _id: mongodb.ObjectId(this._id),
+            },
+            { $set: { cart: { items: updatedCartItems } } }
+        );
+    }
+
     static findById(userId) {
         const db = getDb();
         return db
