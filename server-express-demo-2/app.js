@@ -4,8 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
-const mongoConnect = require('./utils/database').mongoConnect;
-const User = require('./models/user');
+const mongoConnect = require("./utils/database").mongoConnect;
+const User = require("./models/user");
 
 const app = express();
 
@@ -33,7 +33,6 @@ app.use((req, res, next) => {
         .catch((err) => {
             console.log(err);
         });
-    next();
 });
 
 //to serve static files: pass in folder to grant read-access to
@@ -48,4 +47,4 @@ app.use(errorController.get404Page);
 
 mongoConnect(() => {
     app.listen(PORT);
-})
+});
