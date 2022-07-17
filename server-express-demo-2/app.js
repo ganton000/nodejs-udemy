@@ -2,9 +2,9 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const errorController = require("./controllers/error");
-const mongoConnect = require("./utils/database").mongoConnect;
 const User = require("./models/user");
 
 const app = express();
@@ -45,6 +45,7 @@ app.use(shopRoutes);
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);
 
-mongoConnect(() => {
-    app.listen(PORT);
-});
+mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => app.listen(PORT))
+    .catch((err) => console.log(err));
