@@ -11,6 +11,7 @@ exports.getAddProduct = (req, res, next) => {
         price: "",
         description: "",
         buttonAction: "Add",
+        isAuthenticated: req.isLoggedIn
     });
 };
 
@@ -59,6 +60,7 @@ exports.getEditProduct = (req, res, next) => {
                 imageUrl: edit ? product.imageUrl : "",
                 price: edit ? product.price : "",
                 description: edit ? product.description : "",
+                isAuthenticated: req.isLoggedIn
             });
         })
         .catch((err) => console.log(err));
@@ -93,11 +95,12 @@ exports.getProducts = (req, res, next) => {
         //.select('-title')
         //.populate("userId")
         .then((products) => {
-            console.log(products)
+            console.log(products);
             res.render("admin/products", {
                 products,
                 path: "/admin/products",
                 docTitle: "My Products",
+                isAuthenticated: req.isLoggedIn,
             });
         })
         .catch((err) => console.log(err));
