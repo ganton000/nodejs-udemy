@@ -67,32 +67,6 @@ userSchema.methods.removeFromCart = function (productId) {
 
 module.exports = mongoose.model("Users", userSchema);
 
-//    addOrder() {
-//        const db = getDb();
-
-//        return this.getCart()
-//            .then((products) => {
-//                const order = {
-//                    items: products,
-//                    user: {
-//                        _id: mongodb.ObjectId(this._id),
-//                        name: this.name,
-//                        email: this.email,
-//                    },
-//                };
-//                return db.collection("orders").insertOne(order);
-//            })
-//            .then((result) => {
-//                this.cart = { items: [] };
-//                return db.collection("users").updateOne(
-//                    {
-//                        _id: mongodb.ObjectId(this._id),
-//                    },
-//                    { $set: { cart: { items: [] } } }
-//                );
-//            })
-//            .catch((err) => console.log(err));
-//    }
 
 //    getOrders() {
 //        const db = getDb();
