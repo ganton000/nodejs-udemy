@@ -6,11 +6,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
 const app = express();
+const store = new MongoDBStore({
+    uri: process.env.MONGODB_URI,
+    collection: "sessions",
+});
 
 //global config state management
 //compile dynamic templates with pug engine
@@ -31,6 +36,7 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
+        store: store,
     })
 );
 
