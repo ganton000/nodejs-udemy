@@ -65,23 +65,9 @@ userSchema.methods.removeFromCart = function (productId) {
     return this.save();
 };
 
+userSchema.methods.clearCart = function () {
+    this.cart = { items: [] };
+    return this.save();
+};
+
 module.exports = mongoose.model("Users", userSchema);
-
-
-//    getOrders() {
-//        const db = getDb();
-//        return db
-//            .collection("orders")
-//            .find({ "user._id": mongodb.ObjectId(this._id) })
-//            .toArray();
-//    }
-
-//    static findById(userId) {
-//        const db = getDb();
-//        return db
-//            .collection("users")
-//            .findOne({ _id: mongodb.ObjectId(userId.trim()) });
-//    }
-//}
-
-//module.exports = User;
