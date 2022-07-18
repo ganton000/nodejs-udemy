@@ -1,9 +1,7 @@
 exports.getLogin = (req, res, next) => {
-
     let isLoggedIn = "false";
-
-    if (req.get('Cookie')) {
-        isLoggedIn = req.get("Cookie").split("=")[1].trim();
+    if (req.get("Cookie")) {
+        isLoggedIn = req.get("Cookie").split("=")[1].trim() === "true";
     }
 
     res.render("auth/login", {
@@ -14,6 +12,6 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-    res.setHeader("Set-Cookie", "loggedIn=true");
+    res.setHeader("Set-Cookie", "loggedIn=true; HttpOnly");
     res.redirect("/");
 };

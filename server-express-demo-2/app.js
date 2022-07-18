@@ -5,6 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -25,6 +26,13 @@ const PORT = 3001;
 
 //parses req.body sent through forms
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+    })
+);
 
 //register new middleware to retrieve User
 app.use((req, res, next) => {
