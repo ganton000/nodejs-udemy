@@ -68,18 +68,6 @@ app.use(errorController.get404Page);
 mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
-        User.findOne().then((user) => {
-            if (!user) {
-                const user = new User({
-                    name: "Harry",
-                    email: "Harry@gmail.com",
-                    cart: {
-                        items: [],
-                    },
-                });
-                user.save();
-            }
-        });
         app.listen(PORT);
     })
     .catch((err) => console.log(err));
