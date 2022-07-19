@@ -62,6 +62,13 @@ app.use((req, res, next) => {
         .catch((err) => console.log(err));
 });
 
+//loads variables to every res.render() call
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 //set up routes
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
