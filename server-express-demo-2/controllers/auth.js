@@ -25,14 +25,31 @@ exports.getSignup = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-    User.findById("62d49e22b166f91e0d342e77")
+    const { email, password } = req.body;
+
+    User.findOne({ email })
         .then((user) => {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            req.session.save((err) => {
-                console.log(err);
-                res.redirect("/");
-            });
+            if (!user) {
+                return res.redirect("/signup");
+            }
+
+            bcrypt
+                .compare(password, user.password)
+                .then((doMatch) => {
+                    if (!doMatch) {
+                        return res.redirect("/login");
+                    }
+                    req.session.isLoggedIn = true;
+                    req.session.user = user;
+                    return req.session.save((err) => {
+                        console.log(err);
+                        console.log('signed in!')
+                        res.redirect("/");
+                    });
+                })
+                .catch((err) => {
+                    res.redirect("/login");
+                });
         })
         .catch((err) => console.log(err));
 
@@ -48,18 +65,19 @@ exports.postSignup = (req, res, next) => {
                 return res.redirect("/login");
             }
 
-            return bcrypt.hash(password, 12);
-        })
-        .then((hashedPassword) => {
-            const user = new User({
-                email,
-                password: hashedPassword,
-                cart: { items: [] },
-            });
-            return user.save();
-        })
-        .then((result) => {
-            res.redirect("/");
+            return bcrypt
+                .hash(password, 12)
+                .then((hashedPassword) => {
+                    const user = new User({
+                        email,
+                        password: hashedPassword,
+                        cart: { items: [] },
+                    });
+                    return user.save();
+                })
+                .then((result) => {
+                    res.redirect("/");
+                });
         })
         .catch((err) => console.log(err));
 };
