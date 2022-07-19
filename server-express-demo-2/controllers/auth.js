@@ -10,7 +10,15 @@ exports.getLogin = (req, res, next) => {
     res.render("auth/login", {
         path: "/login",
         docTitle: "Login",
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: false,
+    });
+};
+
+exports.getSignup = (req, res, next) => {
+    res.render("auth/signup", {
+        path: "/signup",
+        docTitle: "Signup",
+        isAuthenticated: false,
     });
 };
 
@@ -20,7 +28,7 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             req.session.user = user;
             req.session.save((err) => {
-                console.log(err)
+                console.log(err);
                 res.redirect("/");
             });
         })
@@ -29,9 +37,11 @@ exports.postLogin = (req, res, next) => {
     //res.setHeader("Set-Cookie", "loggedIn=true; HttpOnly");
 };
 
+exports.postSignup = (req, res, next) => {};
+
 exports.postLogout = (req, res, next) => {
     req.session.destroy((err) => {
-        console.log(err)
+        console.log(err);
         res.redirect("/");
     });
 };
