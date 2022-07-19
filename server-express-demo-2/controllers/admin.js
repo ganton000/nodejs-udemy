@@ -11,7 +11,7 @@ exports.getAddProduct = (req, res, next) => {
         price: "",
         description: "",
         buttonAction: "Add",
-        isAuthenticated: req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn,
     });
 };
 
@@ -22,7 +22,7 @@ exports.postAddProduct = (req, res, next) => {
         price,
         description,
         imageUrl,
-        userId: req.session.user._id,
+        userId: req.user._id,
     });
 
     product
@@ -60,7 +60,7 @@ exports.getEditProduct = (req, res, next) => {
                 imageUrl: edit ? product.imageUrl : "",
                 price: edit ? product.price : "",
                 description: edit ? product.description : "",
-                isAuthenticated: req.session.isLoggedIn
+                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch((err) => console.log(err));
