@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -16,6 +17,7 @@ const store = new MongoDBStore({
     uri: process.env.MONGODB_URI,
     collection: "sessions",
 });
+const csrfProtection = csrf();
 
 //global config state management
 //compile dynamic templates with pug engine
@@ -39,6 +41,9 @@ app.use(
         store: store,
     })
 );
+
+//Middleware to protect against csrf attacks
+app.use(csrfProtection);
 
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
