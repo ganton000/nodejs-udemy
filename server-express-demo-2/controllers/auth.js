@@ -8,11 +8,17 @@ exports.getLogin = (req, res, next) => {
         isLoggedIn = req.get("Cookie").split("=")[1].trim() === "true";
     }
 
-    console.log(req.session.isLoggedIn);
+    let message = req.flash("error");
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
     res.render("auth/login", {
         path: "/login",
         docTitle: "Login",
-        isAuthenticated: false,
+        errorMessage: message,
     });
 };
 
@@ -20,7 +26,6 @@ exports.getSignup = (req, res, next) => {
     res.render("auth/signup", {
         path: "/signup",
         docTitle: "Signup",
-        isAuthenticated: false,
     });
 };
 
@@ -30,6 +35,7 @@ exports.postLogin = (req, res, next) => {
     User.findOne({ email })
         .then((user) => {
             if (!user) {
+                req.flash("error", "Invalid credentials!");
                 return res.redirect("/signup");
             }
 

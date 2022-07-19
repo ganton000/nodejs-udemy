@@ -11,7 +11,6 @@ exports.getAddProduct = (req, res, next) => {
         price: "",
         description: "",
         buttonAction: "Add",
-        isAuthenticated: req.session.isLoggedIn,
     });
 };
 
@@ -60,7 +59,6 @@ exports.getEditProduct = (req, res, next) => {
                 imageUrl: edit ? product.imageUrl : "",
                 price: edit ? product.price : "",
                 description: edit ? product.description : "",
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch((err) => console.log(err));
@@ -100,7 +98,6 @@ exports.getProducts = (req, res, next) => {
                 products,
                 path: "/admin/products",
                 docTitle: "My Products",
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch((err) => console.log(err));

@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
+const flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -42,8 +43,11 @@ app.use(
     })
 );
 
+//Must be registered after Session
 //Middleware to protect against csrf attacks
 app.use(csrfProtection);
+
+app.use(flash())
 
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
