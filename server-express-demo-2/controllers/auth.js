@@ -111,7 +111,7 @@ exports.postSignup = (req, res, next) => {
                     res.redirect("/");
                     return transporter.sendMail({
                         to: email,
-                        from: "shop@anton-site.com",
+                        from: process.env.SENDGRID_VERIFIED_SENDER,
                         subject: "Signup succeeded!",
                         html: "<h1>You successfully signed up!</h1>",
                     });
@@ -127,5 +127,20 @@ exports.postLogout = (req, res, next) => {
     req.session.destroy((err) => {
         console.log(err);
         res.redirect("/");
+    });
+};
+
+exports.getReset = (req, res, next) => {
+    let message = req.flash("error");
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+
+    res.render("auth/reset", {
+        path: "/reset",
+        docTitle: "Reset Password",
+        errorMessage: message,
     });
 };
