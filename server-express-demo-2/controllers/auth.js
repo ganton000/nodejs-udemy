@@ -174,7 +174,7 @@ exports.postReset = (req, res, next) => {
                     subject: "Password reset",
                     html: `
                         <p>You requested a password reset</p>
-                        <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+                        <p>Click this <a href="http://localhost:3001/reset/${token}">link</a> to set a new password.</p>
                     `,
                 });
             })
@@ -205,9 +205,48 @@ exports.getNewPassword = (req, res, next) => {
                 docTitle: "New Password",
                 errorMessage: message,
                 userId: user._id.toString(),
+                passwordToken: token,
             });
         })
         .catch((err) => {
             console.log(err);
         });
+};
+
+exports.postNewPassword = (req, res, next) => {
+    const {
+        userId,
+        passwordToken,
+        password: { newPassword },
+    } = req.body;
+
+    let resetUser;
+
+    User.findOne({
+        resetToken: passwordToken,
+        resetTokenExpiration: { $gt: new Date() },
+        _id: userId,
+    })
+        .then((user) => {
+            resetUser = user;
+            return bcrypt.hash(newPassword, 12);
+        })
+        .then((hashedPassword) => {
+            resetUser.password = hashedPassword;
+            resetUser.resetToken = undefined;
+            resetUser.resetTokenExpiration = undefined;
+            return resetUser.save();
+        })
+        .then((result) => {
+            res.redirect("/login");
+            return transporter.sendMail({
+                to: resetUser.email,
+                from: process.env.SENDGRID_VERIFIED_SENDER,
+                subject: "Password reset successful!",
+                html: `
+                    <h1>Your password has been reset successfully!</h1>
+                `,
+            });
+        })
+        .catch((err) => console.log(err));
 };
