@@ -217,14 +217,14 @@ exports.postNewPassword = (req, res, next) => {
     const {
         userId,
         passwordToken,
-        password: { newPassword },
+        password: newPassword,
     } = req.body;
 
     let resetUser;
 
     User.findOne({
         resetToken: passwordToken,
-        resetTokenExpiration: { $gt: new Date() },
+        resetTokenExpiration: { $gt: Date.now() },
         _id: userId,
     })
         .then((user) => {
