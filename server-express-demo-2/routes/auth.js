@@ -6,6 +6,40 @@ const User = require("../models/user");
 
 const router = express.Router();
 
+const signInValidation = () => {
+    return [
+        body("email")
+            .isEmail()
+            .withMessage("Please enter a valid email")
+            .custom((value, { req }) => {
+                //if (value === "test@test.com") {
+                //    throw new Error("This email address is forbidden.");
+                //}
+                //return true;
+                return User.findOne({ email: value }).then((userDoc) => {
+                    if (!userDoc) {
+                        return Promise.reject("This E-Mail does not exist.");
+                    }
+                });
+            }),
+        body("password")
+            .matches(
+                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+                "i"
+            )
+            .withMessage(
+                "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8, max 20 char long"
+            )
+            .custom((value, { req }) => {
+                return User.findOne({ password: value }).then((userDoc) => {
+                    if (!userDoc) {
+                        return Promise.reject("Invalid credentials provided!");
+                    }
+                });
+            }),
+    ];
+};
+
 const signUpValidation = () => {
     return [
         check("email")
@@ -45,7 +79,7 @@ router.get("/login", authController.getLogin);
 
 router.get("/signup", authController.getSignup);
 
-router.post("/login", authController.postLogin);
+router.post("/login", signInValidation(), authController.postLogin);
 
 router.post("/signup", signUpValidation(), authController.postSignup);
 
