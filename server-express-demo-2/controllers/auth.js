@@ -59,7 +59,7 @@ exports.postLogin = (req, res, next) => {
         .then((user) => {
             if (!user) {
                 req.flash("error", "Invalid credentials!");
-                return res.redirect("/signup");
+                return res.redirect("/login");
             }
 
             bcrypt
@@ -88,7 +88,7 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
-    const { email, password, confirmPassword } = req.body;
+    const { email, password } = req.body;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -100,40 +100,28 @@ exports.postSignup = (req, res, next) => {
         });
     }
 
-    User.findOne({ email: email })
-        .then((userDoc) => {
-            if (userDoc) {
-                res.flash(
-                    "error",
-                    "Email already exists! Please choose a different one."
-                );
-                return res.redirect("/login");
-            }
-
-            return bcrypt
-                .hash(password, 12)
-                .then((hashedPassword) => {
-                    const user = new User({
-                        email,
-                        password: hashedPassword,
-                        cart: { items: [] },
-                    });
-                    return user.save();
-                })
-                .then((result) => {
-                    res.redirect("/");
-                    return transporter.sendMail({
-                        to: email,
-                        from: process.env.SENDGRID_VERIFIED_SENDER,
-                        subject: "Signup succeeded!",
-                        html: "<h1>You successfully signed up!</h1>",
-                    });
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+    bcrypt
+        .hash(password, 12)
+        .then((hashedPassword) => {
+            const user = new User({
+                email,
+                password: hashedPassword,
+                cart: { items: [] },
+            });
+            return user.save();
         })
-        .catch((err) => console.log(err));
+        .then((result) => {
+            res.redirect("/");
+            return transporter.sendMail({
+                to: email,
+                from: process.env.SENDGRID_VERIFIED_SENDER,
+                subject: "Signup succeeded!",
+                html: "<h1>You successfully signed up!</h1>",
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 };
 
 exports.postLogout = (req, res, next) => {
