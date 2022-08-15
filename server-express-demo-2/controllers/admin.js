@@ -14,7 +14,7 @@ exports.getAddProduct = (req, res, next) => {
         imageUrl: "",
         price: "",
         description: "",
-        buttonAction: "Add Product",
+        buttonAction: "Add",
     });
 };
 
@@ -33,7 +33,7 @@ exports.postAddProduct = (req, res, next) => {
     if (!errors.isEmpty()) {
         return res.status(422).render("admin/edit-product", {
             docTitle: "Add Product",
-            path: "/admin/edit-product",
+            path: "/admin/add-product",
             editing: false,
             validationErrors: errors.array(),
             errorMessage: errors.array()[0].msg,
@@ -96,6 +96,25 @@ exports.postEditProduct = (req, res, next) => {
         imageUrl: updatedImageUrl,
         description: updatedDesc,
     } = req.body;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).render("admin/edit-product", {
+            docTitle: "Edit Product",
+            path: "/admin/edit-product",
+            editing: true,
+            validationErrors: errors.array(),
+            errorMessage: errors.array()[0].msg,
+            product: { _id: productId.toString() },
+            buttonAction: "Update",
+            action: "edit-product",
+            title: updatedTitle,
+            price: updatedPrice,
+            imageUrl: updatedImageUrl,
+            description: updatedDesc,
+        });
+    }
 
     Product.findById(productId)
         .then((product) => {

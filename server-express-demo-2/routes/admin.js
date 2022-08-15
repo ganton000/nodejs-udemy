@@ -16,8 +16,8 @@ const addProductValidator = () => {
         body("imageUrl").isURL().withMessage("Please enter a valid URL"),
         body("price").isFloat().withMessage("Must be a valid float"),
         body("description")
-            .trim()
             .isLength({ min: 5, max: 400 })
+            .trim()
             .withMessage("Description must be at minimum 5 characters long"),
     ];
 };
@@ -34,8 +34,8 @@ const editProductValidator = () => {
         body("imageUrl").isURL().withMessage("Please enter a valid URL"),
         body("price").isFloat().withMessage("Must be a valid float"),
         body("description")
-            .trim()
             .isLength({ min: 5, max: 400 })
+            .trim()
             .withMessage("Description must be at minimum 5 characters long"),
     ];
 };
