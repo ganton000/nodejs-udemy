@@ -34,6 +34,11 @@ exports.getLogin = (req, res, next) => {
         path: "/login",
         docTitle: "Login",
         errorMessage: message,
+        oldInput: {
+            email: "",
+            password: "",
+        },
+        validationErrors: [],
     });
 };
 
@@ -68,23 +73,34 @@ exports.postLogin = (req, res, next) => {
             path: "/login",
             docTitle: "Login",
             errorMessage: errors.array()[0].msg,
+            oldInput: { email, password },
+            validationErrors: errors.array(),
         });
     }
 
     User.findOne({ email })
         .then((user) => {
             if (!user) {
-                req.flash("error", "Invalid credentials!");
-                return res.redirect("/login");
+                return res.status(422).render("auth/login", {
+                    path: "/login",
+                    docTitle: "Login",
+                    errorMessage: "Invalid credentials!",
+                    oldInput: { email, password },
+                    validationErrors: [],
+                });
             }
 
             bcrypt
                 .compare(password, user.password)
                 .then((doMatch) => {
                     if (!doMatch) {
-                        res.flash("error", "Invalid email or password.");
-
-                        return res.redirect("/login");
+                        return res.status(422).render("auth/login", {
+                            path: "/login",
+                            docTitle: "Login",
+                            errorMessage: "Invalid credentials!",
+                            oldInput: { email, password },
+                            validationErrors: [],
+                        });
                     }
                     req.session.isLoggedIn = true;
                     req.session.user = user;
