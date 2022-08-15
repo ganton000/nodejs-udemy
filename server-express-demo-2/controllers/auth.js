@@ -59,7 +59,7 @@ exports.getSignup = (req, res, next) => {
             password: "",
             confirmPassword: "",
         },
-        validationErrors: errors.array(),
+        validationErrors: [],
     });
 };
 
@@ -106,7 +106,6 @@ exports.postLogin = (req, res, next) => {
                     req.session.user = user;
                     return req.session.save((err) => {
                         console.log(err);
-                        console.log("signed in!");
                         res.redirect("/");
                     });
                 })

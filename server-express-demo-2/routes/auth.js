@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const { check, body } = require("express-validator");
 
 const authController = require("../controllers/auth");
@@ -33,11 +34,20 @@ const signInValidation = () => {
             )
             .trim()
             .custom((value, { req }) => {
-                return User.findOne({ password: value }).then((userDoc) => {
-                    if (!userDoc) {
-                        return Promise.reject("Invalid credentials provided!");
-                    }
-                });
+                return User.findOne({ email: req.body.email })
+                    .then((user) => {
+                        return bcrypt
+                            .compare(value, user.password)
+                            .then((doMatch) => {
+                                if (!doMatch) {
+                                    return Promise.reject(
+                                        "Invalid credentials provided!"
+                                    );
+                                }
+                            })
+                            .catch((err) => console.log(err));
+                    })
+                    .catch((err) => console.log(err));
             }),
     ];
 };
@@ -47,6 +57,7 @@ const signUpValidation = () => {
         check("email")
             .isEmail()
             .withMessage("Please enter a valid email")
+            .normalizeEmail()
             .custom((value, { req }) => {
                 //if (value === "test@test.com") {
                 //    throw new Error("This email address is forbidden.");
@@ -59,8 +70,7 @@ const signUpValidation = () => {
                         );
                     }
                 });
-            })
-            .normalizeEmail(),
+            }),
         body("password")
             .matches(
                 /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
@@ -71,13 +81,13 @@ const signUpValidation = () => {
             )
             .trim(),
         body("confirmPassword")
+            .trim()
             .custom((value, { req }) => {
                 if (value !== req.body.password) {
                     throw new Error("Passwords have to match!");
                 }
                 return true;
-            })
-            .trim(),
+            }),
     ];
 };
 
