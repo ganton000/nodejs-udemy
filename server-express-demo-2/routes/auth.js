@@ -70,12 +70,14 @@ const signUpValidation = () => {
                 "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8, max 20 char long"
             )
             .trim(),
-        body("confirmPassword").custom((value, { req }) => {
-            if (value !== req.body.password) {
-                throw new Error("Passwords have to match!");
-            }
-            return true;
-        }),
+        body("confirmPassword")
+            .custom((value, { req }) => {
+                if (value !== req.body.password) {
+                    throw new Error("Passwords have to match!");
+                }
+                return true;
+            })
+            .trim(),
     ];
 };
 
