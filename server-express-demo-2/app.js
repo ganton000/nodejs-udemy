@@ -87,6 +87,11 @@ app.use(authRoutes);
 app.use(errorController.get404Page);
 app.get("/500", errorController.get500Page);
 
+//Error handling middleware; gets called when next() is called with an Error object
+app.use((error, req, res, next) => {
+    res.redirect("/500");
+});
+
 mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
