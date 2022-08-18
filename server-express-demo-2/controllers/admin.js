@@ -53,19 +53,21 @@ exports.postAddProduct = (req, res, next) => {
             res.redirect("/admin/products");
         })
         .catch((err) => {
-            return res.status(500).render("admin/edit-product", {
-                docTitle: "Add Product",
-                path: "/admin/add-product",
-                editing: false,
-                validationErrors: "Database operation failed, please try again",
-                errorMessage: errors.array()[0].msg,
-                buttonAction: "Add",
-                action: "edit-product",
-                title,
-                price,
-                imageUrl,
-                description,
-            });
+            //return res.status(500).render("admin/edit-product", {
+            //    docTitle: "Add Product",
+            //    path: "/admin/add-product",
+            //    editing: false,
+            //    validationErrors: "Database operation failed, please try again",
+            //    errorMessage: errors.array()[0].msg,
+            //    buttonAction: "Add",
+            //    action: "edit-product",
+            //    title,
+            //    price,
+            //    imageUrl,
+            //    description,
+            //});
+
+            res.redirect("/500");
         });
 };
 

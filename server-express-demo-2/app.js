@@ -85,6 +85,7 @@ app.use(authRoutes);
 
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);
+app.get("/500", errorController.get500Page);
 
 mongoose
     .connect(process.env.MONGODB_URI)
