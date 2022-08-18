@@ -52,6 +52,13 @@ app.use(flash());
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
 
+//loads variables to every res.render() call
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 //this middleware executes after postLogIn session is called
 app.use((req, res, next) => {
     if (!req.session.user) {
@@ -67,15 +74,8 @@ app.use((req, res, next) => {
             next();
         })
         .catch((err) => {
-            throw new Error(err);
+            next(new Error(err));
         });
-});
-
-//loads variables to every res.render() call
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    next();
 });
 
 //set up routes
@@ -89,7 +89,12 @@ app.get("/500", errorController.get500Page);
 
 //Error handling middleware; gets called when next() is called with an Error object
 app.use((error, req, res, next) => {
-    res.redirect("/500");
+    //res.redirect("/500");
+    res.status(500).render("500", {
+        path: "/500",
+        docTitle: "Error!",
+        isAuthenticated: req.session.isLoggedIn,
+    });
 });
 
 mongoose
