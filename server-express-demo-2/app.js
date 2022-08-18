@@ -47,7 +47,7 @@ app.use(
 //Middleware to protect against csrf attacks
 app.use(csrfProtection);
 
-app.use(flash())
+app.use(flash());
 
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
@@ -60,10 +60,15 @@ app.use((req, res, next) => {
 
     User.findById(req.session.user._id)
         .then((user) => {
+            if (!user) {
+                return next();
+            }
             req.user = user;
             next();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            throw new Error(err);
+        });
 });
 
 //loads variables to every res.render() call
