@@ -21,6 +21,15 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString() + "-" + file.originalname);
+    },
+});
+
 //global config state management
 //compile dynamic templates with pug engine
 //and templates are found in views directory.
@@ -36,7 +45,7 @@ const PORT = 3001;
 //parses req.body sent through forms as text
 app.use(bodyParser.urlencoded({ extended: false }));
 //parses req.body sent through forms that are multipart data
-app.use(multer({dest: 'images'}).single("image"));
+app.use(multer({ storage: fileStorage }).single("image"));
 
 app.use(
     session({
