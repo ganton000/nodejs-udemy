@@ -13,7 +13,6 @@ const addProductValidator = () => {
             .withMessage(
                 "Title must be atleast 3 characters long and alphanumeric only"
             ),
-        body("imageUrl").isURL().withMessage("Please enter a valid URL"),
         body("price").isFloat().withMessage("Must be a valid float"),
         body("description")
             .isLength({ min: 5, max: 400 })
@@ -31,7 +30,6 @@ const editProductValidator = () => {
             .withMessage(
                 "Title must be atleast 3 characters long and a string"
             ),
-        body("imageUrl").isURL().withMessage("Please enter a valid URL"),
         body("price").isFloat().withMessage("Must be a valid float"),
         body("description")
             .isLength({ min: 5, max: 400 })

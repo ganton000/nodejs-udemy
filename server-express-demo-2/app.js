@@ -9,6 +9,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -32,8 +33,11 @@ const authRoutes = require("./routes/auth");
 
 const PORT = 3001;
 
-//parses req.body sent through forms
+//parses req.body sent through forms as text
 app.use(bodyParser.urlencoded({ extended: false }));
+//parses req.body sent through forms that are multipart data
+app.use(multer({dest: 'images'}).single("image"));
+
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
