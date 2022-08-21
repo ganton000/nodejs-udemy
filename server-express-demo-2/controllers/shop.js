@@ -152,23 +152,36 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoice = (req, res, next) => {
     const orderId = req.params.orderId;
-    const invoiceName = "invoice-" + orderId + ".pdf";
-    const invoicePath = path.join("data", "invoices", invoiceName);
 
-    fs.readFile(invoicePath, (err, data) => {
-        if (err) {
-            return next(err);
-        }
-        // res.download(invoicePath) //If is to download
-        res.setHeader("Content-Type", "application/pdf");
-        //How content should be served to browser:
-        res.setHeader(
-            "Content-Disposition",
-            //attachment to auto-download on "Invoice" link click
-            //Note for this to work need incognito-mode on Chrome
-            //"attachment; filename='" + invoiceName + "'"
-            "inline; filename='" + invoiceName + "'"
-        );
-        res.send(data);
-    });
+    //match orderId with user that created the order
+    Order.findById(orderId)
+        .then((order) => {
+            if (!order) {
+                return next(new Error("No order found."));
+            }
+            if (order.user.userId.toString() !== req.user._id.toString()) {
+                return next(new Error("Unauthorized"));
+            }
+
+            const invoiceName = "invoice-" + orderId + ".pdf";
+            const invoicePath = path.join("data", "invoices", invoiceName);
+
+            fs.readFile(invoicePath, (err, data) => {
+                if (err) {
+                    return next(err);
+                }
+                // res.download(invoicePath) //If is to download
+                res.setHeader("Content-Type", "application/pdf");
+                //How content should be served to browser:
+                res.setHeader(
+                    "Content-Disposition",
+                    //attachment to auto-download on "Invoice" link click
+                    //Note for this to work need incognito-mode on Chrome
+                    //"attachment; filename='" + invoiceName + "'"
+                    "inline; filename='" + invoiceName + "'"
+                );
+                res.send(data);
+            });
+        })
+        .catch((err) => next(err));
 };
