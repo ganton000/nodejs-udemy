@@ -35,6 +35,9 @@
                             </article>
                             <% } %>
                     </div>
+                    <%- include('../includes/pagination.ejs', {
+                        pagination: pagination
+                    }) %>
                     <% } else { %>
                         <h1>No Products Found!</h1>
                         <% } %>
