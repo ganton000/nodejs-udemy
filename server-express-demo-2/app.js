@@ -30,6 +30,18 @@ const fileStorage = multer.diskStorage({
     },
 });
 
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg"
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
 //global config state management
 //compile dynamic templates with pug engine
 //and templates are found in views directory.
@@ -45,7 +57,12 @@ const PORT = 3001;
 //parses req.body sent through forms as text
 app.use(bodyParser.urlencoded({ extended: false }));
 //parses req.body sent through forms that are multipart data
-app.use(multer({ storage: fileStorage }).single("image"));
+app.use(
+    multer({
+        storage: fileStorage,
+        fileFilter: fileFilter,
+    }).single("image")
+);
 
 app.use(
     session({
