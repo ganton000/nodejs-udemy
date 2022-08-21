@@ -166,22 +166,33 @@ exports.getInvoice = (req, res, next) => {
             const invoiceName = "invoice-" + orderId + ".pdf";
             const invoicePath = path.join("data", "invoices", invoiceName);
 
-            fs.readFile(invoicePath, (err, data) => {
-                if (err) {
-                    return next(err);
-                }
-                // res.download(invoicePath) //If is to download
-                res.setHeader("Content-Type", "application/pdf");
-                //How content should be served to browser:
-                res.setHeader(
-                    "Content-Disposition",
-                    //attachment to auto-download on "Invoice" link click
-                    //Note for this to work need incognito-mode on Chrome
-                    //"attachment; filename='" + invoiceName + "'"
-                    "inline; filename='" + invoiceName + "'"
-                );
-                res.send(data);
-            });
+            //Read file stores read data temporarily in memory
+            //Watch can cause a memory overflow
+            //fs.readFile(invoicePath, (err, data) => {
+            //    if (err) {
+            //        return next(err);
+            //    }
+            //    // res.download(invoicePath) //If is to download
+            //    res.setHeader("Content-Type", "application/pdf");
+            //    //How content should be served to browser:
+            //    res.setHeader(
+            //        "Content-Disposition",
+            //        //attachment to auto-download on "Invoice" link click
+            //        //Note for this to work need incognito-mode on Chrome
+            //        //"attachment; filename='" + invoiceName + "'"
+            //        "inline; filename='" + invoiceName + "'"
+            //    );
+            //    res.send(data);
+            //});
+
+            //Reads file in chunks
+            const file = fs.createReadStream(invoicePath);
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader(
+                "Content-Disposition",
+                "inline; filename='" + invoiceName + "'"
+            );
+            file.pipe(res); //res is a writeable stream
         })
         .catch((err) => next(err));
 };
