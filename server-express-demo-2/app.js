@@ -1,29 +1,46 @@
 const path = require("path");
 
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
-//const expressHbs = require("express-handlebars");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
+const multer = require("multer");
 
 const errorController = require("./controllers/error");
-const sequelize = require("./utils/database");
-const Product = require("./models/product");
 const User = require("./models/user");
-const Cart = require("./models/cart");
-const CartItem = require("./models/cart-item");
-const Order = require("./models/order.js");
-const OrderItem = require("./models/order-item");
 
 const app = express();
+const store = new MongoDBStore({
+    uri: process.env.MONGODB_URI,
+    collection: "sessions",
+});
+const csrfProtection = csrf();
 
-//registers new templating engine
-//app.engine(
-//    "hbs",
-//    expressHbs({
-//        layoutsir: "views/layouts/",
-//        defaultLayout: "main-layout",
-//        extname: "hbs",
-//    })
-//);
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString() + "-" + file.originalname);
+    },
+});
+
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg"
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
 
 //global config state management
 //compile dynamic templates with pug engine
@@ -33,67 +50,87 @@ app.set("views", "views");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const authRoutes = require("./routes/auth");
 
 const PORT = 3001;
 
-//parses req.body sent through forms
+//parses req.body sent through forms as text
 app.use(bodyParser.urlencoded({ extended: false }));
+//parses req.body sent through forms that are multipart data
+app.use(
+    multer({
+        storage: fileStorage,
+        fileFilter: fileFilter,
+    }).single("image")
+);
 
-//register new middleware to retrieve User
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store: store,
+    })
+);
+
+//Must be registered after Session
+//Middleware to protect against csrf attacks
+app.use(csrfProtection);
+
+app.use(flash());
+
+//to serve static files: pass in folder to grant read-access to
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+//loads variables to every res.render() call
 app.use((req, res, next) => {
-    User.findByPk(1)
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
+//this middleware executes after postLogIn session is called
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+
+    User.findById(req.session.user._id)
         .then((user) => {
+            if (!user) {
+                return next();
+            }
             req.user = user;
             next();
         })
         .catch((err) => {
-            console.log(err);
+            next(new Error(err));
         });
 });
-
-//to serve static files: pass in folder to grant read-access to
-app.use(express.static(path.join(__dirname, "public")));
 
 //set up routes
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 //catch all to return page not found for unmatched paths
 app.use(errorController.get404Page);
+app.get("/500", errorController.get500Page);
 
-//create relationships between models
-Product.belongsTo(User, { constraints: true, onelete: "CASCADE" });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
-
-sequelize
-    //.sync({ force: true })
-    .sync()
-    .then((result) => {
-        return User.findByPk(1);
-        app.listen(PORT);
-    })
-    .then((user) => {
-        if (!user) {
-            return User.create({ name: "Harry", email: "Harry@gmail.com" });
-        }
-
-        return Promise.resolve(user);
-    })
-    .then((user) => {
-        //create cart for the user
-        return user.createCart();
-    })
-    .then((cart) => {
-        app.listen(PORT);
-    })
-    .catch((err) => {
-        console.log(err);
+//Error handling middleware; gets called when next() is called with an Error object
+app.use((error, req, res, next) => {
+    //res.redirect("/500");
+    res.status(500).render("500", {
+        path: "/500",
+        docTitle: "Error!",
+        isAuthenticated: req.session.isLoggedIn,
     });
+});
+
+mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+        app.listen(PORT);
+    })
+    .catch((err) => console.log(err));
