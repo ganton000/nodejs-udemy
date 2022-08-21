@@ -81,6 +81,7 @@ app.use(flash());
 
 //to serve static files: pass in folder to grant read-access to
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //loads variables to every res.render() call
 app.use((req, res, next) => {

@@ -20,8 +20,25 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
     const { title, price, description } = req.body;
-    const imageUrl = req.file;
-    console.log(imageUrl);
+    const image = req.file;
+
+    if (!image) {
+        return res.status(422).render("admin/edit-product", {
+            docTitle: "Add Product",
+            path: "/admin/add-product",
+            editing: false,
+            validationErrors: [],
+            errorMessage: "Attached file is not an image.",
+            buttonAction: "Add",
+            action: "edit-product",
+            title,
+            price,
+            description,
+        });
+    }
+
+    const imageUrl = image.path;
+
     const product = new Product({
         title,
         price,
@@ -43,7 +60,6 @@ exports.postAddProduct = (req, res, next) => {
             action: "edit-product",
             title,
             price,
-            imageUrl,
             description,
         });
     }
@@ -117,9 +133,10 @@ exports.postEditProduct = (req, res, next) => {
         productId,
         title: updatedTitle,
         price: updatedPrice,
-        imageUrl: updatedImageUrl,
         description: updatedDesc,
     } = req.body;
+
+    const image = req.file;
 
     const errors = validationResult(req);
 
@@ -135,7 +152,6 @@ exports.postEditProduct = (req, res, next) => {
             action: "edit-product",
             title: updatedTitle,
             price: updatedPrice,
-            imageUrl: updatedImageUrl,
             description: updatedDesc,
         });
     }
@@ -148,7 +164,10 @@ exports.postEditProduct = (req, res, next) => {
             product.title = updatedTitle;
             product.price = updatedPrice;
             product.description = updatedDesc;
-            product.imageUrl = updatedImageUrl;
+
+            if (image) {
+                product.imageUrl = image.path
+            }
             return product.save().then((result) => {
                 console.log("Updated Product");
                 res.redirect("/admin/products");
