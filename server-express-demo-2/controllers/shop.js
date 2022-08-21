@@ -10,7 +10,6 @@ const ITEMS_PER_PAGE = 3;
 
 exports.getProducts = (req, res, next) => {
     const page = +req.query.page || 1; //query param in url
-    let totalItems;
 
     Product.find()
         .skip((page - 1) * ITEMS_PER_PAGE)
@@ -63,7 +62,6 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
     const page = +req.query.page || 1; //query param in url
-    let totalItems;
 
     //Product.find()
     //    .countDocuments()
