@@ -159,6 +159,16 @@ exports.getInvoice = (req, res, next) => {
         if (err) {
             return next(err);
         }
+        // res.download(invoicePath) //If is to download
+        res.setHeader("Content-Type", "application/pdf");
+        //How content should be served to browser:
+        res.setHeader(
+            "Content-Disposition",
+            //attachment to auto-download on "Invoice" link click
+            //Note for this to work need incognito-mode on Chrome
+            //"attachment; filename='" + invoiceName + "'"
+            "inline; filename='" + invoiceName + "'"
+        );
         res.send(data);
     });
 };
