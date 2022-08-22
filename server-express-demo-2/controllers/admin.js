@@ -189,7 +189,6 @@ exports.getProducts = (req, res, next) => {
         //.select('-title')
         //.populate("userId")
         .then((products) => {
-            console.log(products);
             res.render("admin/products", {
                 products,
                 path: "/admin/products",
