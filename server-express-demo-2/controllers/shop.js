@@ -181,15 +181,22 @@ exports.getCheckout = (req, res, next) => {
 
             return stripe.checkout.sessions.create({
                 payment_method_types: ["card"],
+                mode: "payment",
                 line_items: products.map((p) => {
                     return {
-                        name: p.productId.title,
-                        description: p.productId.description,
-                        amount: p.productId.price * 100,
-                        currency: "usd",
                         quantity: p.quantity,
+                        price_data: {
+                            currency: "usd",
+                            unit_amount: p.productId.price * 100,
+
+                        },
+                        product_data: {
+                            name: p.productId.title,
+                            description: p.productId.description,
+                        }
                     };
                 }),
+                customer_email: req.user.email,
                 success_url:
                     req.protocol +
                     "://" +
