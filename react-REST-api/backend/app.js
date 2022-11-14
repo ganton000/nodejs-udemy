@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const multer = require("multer");
 
 require("dotenv").config();
 
@@ -9,6 +10,15 @@ const feedRoutes = require("./routes/feed");
 
 const PORT = 8080;
 const app = express();
+
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString() + "-" + file.originalname);
+    },
+});
 
 app.use(bodyParser.json()); //application/json
 app.use("/images", express.static(path.join(__dirname, "images")));
