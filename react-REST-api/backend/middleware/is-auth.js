@@ -1,7 +1,4 @@
 const jwt = require("jsonwebtoken");
-const {
-    default: errorHandler,
-} = require("../../frontend/src/components/ErrorHandler/ErrorHandler");
 
 module.exports = (req, res, next) => {
     //middleware to be used in routes to
