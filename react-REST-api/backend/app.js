@@ -79,7 +79,8 @@ mongoose
             );
         });
 
-        const io = require("socket.io")(server);
+        //set up socket.io (builds upon http)
+        const io = require("./socket").init(server);
         io.on("connection", (socket) => {
             console.log("Client connected");
         });
