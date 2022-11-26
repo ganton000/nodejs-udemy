@@ -1,10 +1,13 @@
 const path = require("path");
+const fs = require("fs");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const helmet = require("helmet");
 const compression = require("compression");
+const morgan = require("morgan");
 
 require("dotenv").config();
 
@@ -40,6 +43,19 @@ app.use(helmet());
 
 //compresses size of assets being loaded on client
 app.use(compression());
+
+//logging library into stream
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, "access.log"),
+    {
+        flags: "a",
+    }
+);
+app.use(
+    morgan("combined", {
+        stream: accessLogStream,
+    })
+);
 
 app.use(bodyParser.json()); //application/json
 app.use(
