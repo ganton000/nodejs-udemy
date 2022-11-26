@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const helmet = require("helmet");
 
 require("dotenv").config();
 
@@ -32,6 +33,9 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 };
+
+//secure header options to send in response
+app.use(helmet());
 
 app.use(bodyParser.json()); //application/json
 app.use(
