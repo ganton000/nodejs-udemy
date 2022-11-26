@@ -75,7 +75,13 @@ exports.createPost = async (req, res, next) => {
         // uses io to send post to all other connected clients
         io.getIO().emit("posts", {
             action: "create",
-            post,
+            post: {
+                ...post._doc,
+                creator: {
+                    _id: req.userId,
+                    name: user.name,
+                },
+            },
         });
 
         res.status(201).json({
