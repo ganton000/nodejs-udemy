@@ -4,6 +4,10 @@ import { Todo } from "../models/todo";
 
 const router = Router();
 
+//type aliases
+type RequestBody = { text: string };
+type RequestParams = { todoId: string };
+
 const todos: Todo[] = [];
 
 router.get("/", (req, res, next) => {
@@ -11,9 +15,10 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/todo", (req, res, next) => {
+    const body = req.body as RequestBody;
     const newTodo: Todo = {
         id: new Date().toISOString(),
-        text: req.body.text,
+        text: body.text,
     };
 
     todos.push(newTodo);
@@ -25,7 +30,9 @@ router.post("/todo", (req, res, next) => {
 });
 
 router.put("/todo/:todoId", (req, res, next) => {
-    const tid = req.params.todoId;
+    const params = req.params as RequestParams;
+    const tid = params.todoId;
+    const body = req.body as RequestBody;
 
     const todoIndex = todos.findIndex((todoItem) => {
         todoItem.id === tid;
@@ -33,7 +40,7 @@ router.put("/todo/:todoId", (req, res, next) => {
     if (todoIndex >= 0) {
         todos[todoIndex] = {
             id: todos[todoIndex].id,
-            text: req.body.text,
+            text: body.text,
         };
 
         return res.status(200).json({
@@ -45,7 +52,8 @@ router.put("/todo/:todoId", (req, res, next) => {
 });
 
 router.delete("/todo/:todoId", (req, res, next) => {
-    const tid = req.params.todoId;
+    const params = req.params as RequestParams;
+    const tid = params.todoId;
     todos.filter((todoItem) => todoItem.id !== tid);
 
     res.status(200).json({
